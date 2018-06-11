@@ -3,8 +3,44 @@
 /**
  * Kunai Com Corrente
  * 
- * kunai.js goes into the site WITH the sha256 of the folder, then it can load the scripts from the kunais's site folder;
+ * chain.js goes into the site, then it can load the scripts from the kunais's site folder;
  */
 
 // Setting the field for the injection;
-var url = location.href;
+var hostName = window.location.hostname,
+    myHostName = "programming.firstmatter.com.br/kunai-com-corrente/kunais";
+
+// What are you loading?
+var ajax = new XMLHttpRequest(),
+    kunaisToThrow = [];
+
+//Read the kunai.json file from the kunais/*hostName*/ folder... 
+ajax.open("GET", "//" + myHostName + "/" + hostName + "/kunai.json", true); 
+ajax.send();
+ajax.onreadystatechange = function () {
+    if (ajax.readyState == 4 && ajax.status == 200) {
+        let data = JSON.parse(ajax.responseText);
+
+        for (let i = 0; i < data.files.length; i++) {
+            kunaisToThrow.push(data.files[i]);
+        }
+
+        // Throw the Kunai;
+        throwKunai(kunaisToThrow);
+    }
+}
+
+// Insert the kunais into the HEAD element of the site, it works with an array of kunais or a single kunai;
+function throwKunai(kunais) {
+    if (Array.isArray(kunais)) {
+        for (let i = 0; i < kunais.length; i++) {
+            let thisKunai = document.createElement('script');
+            thisKunai.setAttribute('src', '//' + myHostName + '/' + hostName + '/js/' + kunais[i] + '.js');
+            document.head.appendChild(thisKunai);
+        }
+    } else {
+        let thisKunai = document.createElement('script');
+        thisKunai.setAttribute('src', '//' + myHostName + '/' + hostName + '/js/' + kunais + '.js');
+        document.head.appendChild(thisKunai);
+    }
+}
