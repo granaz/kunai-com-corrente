@@ -8,14 +8,12 @@
 
 // Setting the field for the injection;
 var hostName = window.location.hostname,
-    myHostName = "programming.firstmatter.com.br/kunai-com-corrente/kunais";
-
-// What are you loading?
-var ajax = new XMLHttpRequest(),
+    myHostName = "programming.firstmatter.com.br/kunai-com-corrente/kunais",
+    ajax = new XMLHttpRequest(),
     kunaisToThrow = [];
 
-//Read the kunai.json file from the kunais/*hostName*/ folder... 
-ajax.open("GET", "//" + myHostName + "/" + hostName + "/kunai.json", true); 
+// Read the kunai.json file from the kunais/*hostName*/ folder... 
+ajax.open("GET", "//" + myHostName + "/" + hostName + "/kunai.json", true);
 ajax.send();
 ajax.onreadystatechange = function () {
     if (ajax.readyState == 4 && ajax.status == 200) {
@@ -27,6 +25,8 @@ ajax.onreadystatechange = function () {
 
         // Throw the Kunai;
         throwKunai(kunaisToThrow);
+    } else if (ajax.status == 404) {
+        console.error("Could not retrive the JSON file from this source: " + myHostName + "/" + hostName + "/kunai.json");
     }
 }
 
